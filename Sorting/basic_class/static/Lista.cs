@@ -15,41 +15,57 @@
         {
             if (cont < lista.Length)
             {
-                lista[cont] = item;
-                cont++;
+                lista[cont++] = item;
                 return true;
             }
-            else
-            {
-                Console.WriteLine("Lista está cheia, não é possível inserir " + item);
-                return false;
-            }
+            Console.WriteLine("Lista cheia");
+            return false;
         }
 
         public bool InserirInicio(int item)
         {
-            return true;// implemente
+            if (cont >= lista.Length) return false;
+            for (int i = cont; i > 0; i--)
+                lista[i] = lista[i - 1];
+            lista[0] = item;
+            cont++;
+            return true;
         }
 
-        public bool InserirPosicao(int pos)
+        public bool InserirPosicao(int pos, int item)
         {
-            return true;// implemente
+            if (cont >= lista.Length || pos < 0 || pos > cont) return false;
+            for (int i = cont; i > pos; i--)
+                lista[i] = lista[i - 1];
+            lista[pos] = item;
+            cont++;
+            return true;
         }
 
         public int RemoverFim()
         {
-            return -1; // implemente
+            if (cont == 0) return -1;
+            return lista[--cont];
         }
 
         public int RemoverInicio()
         {
-            return -1; // implemente
+            if (cont == 0) return -1;
+            int tmp = lista[0];
+            for (int i = 0; i < cont - 1; i++)
+                lista[i] = lista[i + 1];
+            cont--;
+            return tmp;
         }
 
         public int RemoverPosicao(int pos)
         {
-            return -1; // implemente
+            if (cont == 0 || pos < 0 || pos >= cont) return -1;
+            int tmp = lista[pos];
+            for (int i = pos; i < cont - 1; i++)
+                lista[i] = lista[i + 1];
+            cont--;
+            return tmp;
         }
-
     }
 }

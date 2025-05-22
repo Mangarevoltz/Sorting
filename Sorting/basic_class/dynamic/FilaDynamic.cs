@@ -1,34 +1,63 @@
 ﻿namespace Sorting.basic_class.dynamic
 {
+    class Celula
+    {
+        public int valor;
+        public Celula? prox;
+
+        public Celula(int valor)
+        {
+            this.valor = valor;
+            this.prox = null;
+        }
+    }
+
     class FilaDynamic
     {
-        public Celula? primeiro;
-        public Celula? ultimo;
+        private Celula? primeiro;
+        private Celula? ultimo;
+
         public FilaDynamic()
         {
-            this.primeiro = this.ultimo = new Celula();
+            primeiro = ultimo = null;
         }
 
-        public bool Inserir(int item)
+        public void Inserir(int item)
         {
-            this.ultimo.valor = item;
-            this.ultimo.prox = new Celula();
-            this.ultimo = this.ultimo.prox;
-
-            return true;
+            var nova = new Celula(item);
+            if (ultimo == null)
+            {
+                primeiro = nova;
+            }
+            else
+            {
+                ultimo.prox = nova;
+            }
+            ultimo = nova;
         }
 
         public int Remover()
         {
-            if (this.ultimo == this.primeiro)
+            if (primeiro == null)
             {
-                Console.WriteLine("Não é possível remover da fila.");
+                Console.WriteLine("Fila vazia.");
+                return -1;
             }
 
-            Celula? tmp = primeiro;
-            this.primeiro = primeiro.prox;
+            int valorRemovido = primeiro.valor;
+            primeiro = primeiro.prox;
 
-            return -1;
+            if (primeiro == null) ultimo = null;
+
+            return valorRemovido;
+        }
+
+        public void Mostrar()
+        {
+            Console.Write("Fila dinâmica: ");
+            for (var atual = primeiro; atual != null; atual = atual.prox)
+                Console.Write(atual.valor + " ");
+            Console.WriteLine();
         }
     }
 }

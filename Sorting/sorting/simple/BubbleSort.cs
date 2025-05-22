@@ -1,4 +1,6 @@
-﻿namespace Sorting.sorting.simple
+﻿using Sorting.utils;
+
+namespace Sorting.sorting.simple
 {
     class BubbleSort
     {
@@ -10,11 +12,19 @@
             {
                 for (int j = n - 1; j > i; j--)
                 {
+                    UtilCountingTime.ContarComparacao();
                     if (vet[j] < vet[j - 1])
                     {
                         int tmp = vet[j];
+                        UtilCountingTime.ContarAtribuicao();
+
                         vet[j] = vet[j - 1];
+                        UtilCountingTime.ContarAtribuicao();
+
                         vet[j - 1] = tmp;
+                        UtilCountingTime.ContarAtribuicao();
+
+                        UtilCountingTime.ContarTroca();
                     }
                 }
             }
