@@ -1,20 +1,17 @@
 ﻿using Sorting.basic_class.@static;
+using Sorting.basic_class.dynamic;
 using Sorting.enums;
-using manager;
-using print;
-using reader;
-using utils;
 using Sorting.manager;
 using Sorting.print;
 using Sorting.reader;
-using Sorting.utils;
-using Sorting.basic_class.dynamic;
 using Sorting.sorting.simple;
+using Sorting.utils;
 
 public class Program
 {
     public static void Main(string[] args)
     {
+        // ===== MENU DE ORDENAÇÃO =====
         Console.WriteLine("Selecione o arquivo de entrada:");
         Console.WriteLine("1 - 10-aleatorios.txt");
         Console.WriteLine("2 - 100-aleatorios.txt");
@@ -34,15 +31,15 @@ public class Program
             "inputs/1000000-ordenados.txt"
         };
 
-        int escolhaArquivo = int.Parse(Console.ReadLine());
+        int escolhaArquivo = int.Parse(Console.ReadLine() ?? "1");
         if (escolhaArquivo < 1 || escolhaArquivo > arquivos.Length)
         {
             Console.WriteLine("Arquivo inválido.");
             return;
         }
 
-        string caminho = arquivos[escolhaArquivo - 1];
-        int[] vet = ReaderFile.LerArquivo(caminho); // ← leitor já implementado
+        var caminho = arquivos[escolhaArquivo - 1];
+        int[] vet = ReaderFile.LerArquivo(caminho);
 
         Console.WriteLine("Escolha o algoritmo de ordenação:");
         Console.WriteLine("1 - BubbleSort");
@@ -56,103 +53,94 @@ public class Program
         Console.WriteLine("9 - RadixSort");
         Console.WriteLine("10 - BucketSort");
 
-        int escolhaAlg = int.Parse(Console.ReadLine());
-        Sortings algoritmo;
-
+        int escolhaAlg = int.Parse(Console.ReadLine() ?? "1");
         if (!Enum.IsDefined(typeof(Sortings), escolhaAlg - 1))
         {
             Console.WriteLine("Algoritmo inválido.");
             return;
         }
+        var algoritmo = (Sortings)(escolhaAlg - 1);
 
-        algoritmo = (Sortings)(escolhaAlg - 1);
-
-        // Imprime antes da ordenação (opcional para vetores pequenos)
-        if (vet.Length <= 100) // evita travar terminal com vetores grandes
+        // --- Ordenação do vetor principal ---
+        if (vet.Length <= 100)
         {
             Console.WriteLine("Vetor original:");
             PrintSolutionStatic.ImprimirArrayMesmaLinha(vet, algoritmo);
         }
 
-        ListaDuplamenteEncadeada lista = new ListaDuplamenteEncadeada();
-
-        lista.Inserir(5);
-        lista.Inserir(3);
-        lista.Inserir(8);
-        lista.Inserir(1);
-
-        Console.WriteLine("Lista antes da ordenação:");
-        lista.Mostrar();
-
-        lista.BubbleSort();
-
-        Console.WriteLine("Lista após a ordenação:");
-        lista.Mostrar();
-
-        // Ordenação com contagem de tempo
         UtilCountingTime.IniciarContagem();
         ManagerFileSorting.Ordenar(algoritmo, vet);
         UtilCountingTime.FinalizarContagem();
 
-        // Imprime depois
         if (vet.Length <= 100)
         {
             Console.WriteLine("Vetor ordenado:");
             PrintSolutionStatic.ImprimirArrayMesmaLinha(vet, algoritmo);
         }
-
-        // Mostra tempo e operações
         UtilCountingTime.ImprimirContagem();
 
-        // QUESTÃO 9 - LISTA ESTÁTICA + ORDENAÇÃO------------------------------------------
-        Console.WriteLine("Testando Lista Estática com 1000000 elementos:");
+        // 7 – FILA E PILHA ESTÁTICA
+        Console.WriteLine("\n--- Q7: Fila e Pilha Estática (100 elementos) ---");
+        int[] pequenos = ReaderFile.LerArquivo("inputs/100-aleatorios.txt");
 
-        int[] dados = ReaderFile.LerArquivo("inputs/1000000-aleatorios.txt");
+        var filaEst = new Fila(pequenos.Length);
+        foreach (var x in pequenos) filaEst.Inserir(x);
+        filaEst.Remover(); filaEst.Remover(); filaEst.Remover();
+        Console.Write("Fila estática: ");
+        filaEst.Mostrar();
 
-        Lista lista = new Lista(dados.Length);
+        var pilhaEst = new Pilha(pequenos.Length);
+        foreach (var x in pequenos) pilhaEst.Inserir(x);
+        pilhaEst.Remover(); pilhaEst.Remover(); pilhaEst.Remover();
+        Console.WriteLine("Pilha estática:");
+        pilhaEst.Mostrar();
 
-        foreach (var v in dados)
-            lista.InserirFim(v);
+        // 9 – LISTA ESTÁTICA + ORDENAÇÃO
+        Console.WriteLine("\n--- Q9: Lista Estática + BubbleSort (1.000.000 elementos) ---");
+        int[] milhao = ReaderFile.LerArquivo("inputs/1000000-aleatorios.txt");
+        var listaEst = new Lista(milhao.Length);
+        foreach (var x in milhao) listaEst.InserirFim(x);
 
-        // Clona os dados da lista
-        int[] clone = UtilClonar.Clonar(lista.lista);
-
-        // Ordena com BubbleSort e mede tempo/operações
+        var cloneEst = UtilClonar.Clonar(listaEst.lista);
         UtilCountingTime.IniciarContagem();
-        BubbleSort.Sorting(clone);
+        BubbleSort.Sorting(cloneEst);
         UtilCountingTime.FinalizarContagem();
-
-        Console.WriteLine("Resultado da ordenação com BubbleSort:");
+        Console.WriteLine("BubbleSort em lista estática:");
         UtilCountingTime.ImprimirContagem();
 
-        var filaDinamica = new FilaDynamic();
+        // 10 – ESTRUTURAS DINÂMICAS
+        Console.WriteLine("\n--- Q10: Fila Dinâmica ---");
+        var filaDin = new FilaDynamic();
+        filaDin.Inserir(10);
+        filaDin.Inserir(20);
+        filaDin.Inserir(30);
+        filaDin.Mostrar();
+        filaDin.Remover();
+        filaDin.Mostrar();
 
-        filaDinamica.Inserir(10);
-        filaDinamica.Inserir(20);
-        filaDinamica.Inserir(30);
+        Console.WriteLine("\n--- Q10: Pilha Dinâmica (usando Pilha estática como base) ---");
+        // como não há PilhaDynamic podemos usar a Pilha estática para simular:
+        var pilhaDin = new Pilha(10);
+        pilhaDin.Inserir(100);
+        pilhaDin.Inserir(200);
+        pilhaDin.Inserir(300);
+        Console.WriteLine("Pilha dinâmica simulada (inserções):");
+        pilhaDin.Mostrar();
+        pilhaDin.Remover();
+        pilhaDin.Remover();
+        Console.WriteLine("Pilha dinâmica simulada (remoções):");
+        pilhaDin.Mostrar();
 
-        filaDinamica.Mostrar(); // Deve mostrar: 10 20 30
+        Console.WriteLine("\n--- Q10: Lista Dinâmica (Duplamente Encadeada) ---");
+        var listaDin = new ListaDuplamenteEncadeada();
+        listaDin.Inserir(7);
+        listaDin.Inserir(2);
+        listaDin.Inserir(9);
+        Console.Write("Antes: ");
+        listaDin.Mostrar();
+        listaDin.BubbleSort();
+        Console.Write("Depois: ");
+        listaDin.Mostrar();
 
-        filaDinamica.Remover();
-        filaDinamica.Mostrar(); // Deve mostrar: 20 30
-
-
-        // QUESTÃO 7 - FILA E PILHA ESTÁTICA-------------------------------------------
-        Console.WriteLine("Testando Fila e Pilha Estática com 100 elementos:");
-        int[] pequenosDados = ReaderFile.LerArquivo("inputs/100-aleatorios.txt");
-
-        // Fila
-        Fila fila = new Fila(pequenosDados.Length);
-        foreach (var v in pequenosDados)
-            fila.Inserir(v);
-        fila.Remover(); fila.Remover(); fila.Remover(); // remove 3
-        fila.Mostrar();
-
-        // Pilha
-        Pilha pilha = new Pilha(pequenosDados.Length);
-        foreach (var v in pequenosDados)
-            pilha.Inserir(v);
-        pilha.Remover(); pilha.Remover(); pilha.Remover();
-        pilha.Mostrar();
     }
 }
